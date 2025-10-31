@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.biz.mapper.BizSystemReserveSummaryMapper">
+    <update id="addTotalReserveAmount">
+        UPDATE biz_system_reserve_summary
+        SET total_reserve_amount = total_reserve_amount + #{amount}
+        WHERE summary_id = #{id}
+    </update>
+
+    <update id="subtractTotalReserveAmount">
+        UPDATE biz_system_reserve_summary
+        SET total_reserve_amount = total_reserve_amount - #{amount}
+        WHERE summary_id = #{id}
+    </update>
+
+    <update id="deductReserveAmount">
+        UPDATE biz_system_reserve_summary
+        SET total_reserve_amount = total_reserve_amount - #{amount}
+        WHERE summary_id = 1 AND total_reserve_amount >= #{amount}
+    </update>
+
+</mapper>

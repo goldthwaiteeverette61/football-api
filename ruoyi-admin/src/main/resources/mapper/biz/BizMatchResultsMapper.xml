@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.biz.mapper.BizMatchResultsMapper">
+
+    <!-- 核心修改: 重写 selectVoPage 方法以进行联表查询 -->
+    <select id="selectVoPage" resultType="org.dromara.biz.domain.vo.BizMatchResultsVo">
+        SELECT
+            r.id,
+            r.match_id,
+            r.pool_id,
+            r.pool_code,
+            r.combination,
+            r.combination_desc,
+            r.goal_line,
+            r.odds,
+            r.created_at,
+            m.match_num_str,
+            m.full_score,
+            ht.abbr_name AS homeTeamName,
+            at.abbr_name AS awayTeamName
+        FROM
+            biz_match_results r
+                LEFT JOIN biz_matches m ON r.match_id = m.match_id
+                LEFT JOIN biz_teams ht ON m.home_team_id = ht.team_id
+                LEFT JOIN biz_teams at ON m.away_team_id = at.team_id
+            ${ew.customSqlSegment}
+    </select>
+
+    <!-- *** 核心修改: 使用新的ID，不覆盖默认的 selectVoPage *** -->
+    <select id="selectVoPageWithDetails" resultType="org.dromara.biz.domain.vo.BizMatchResultsVo">
+        SELECT
+            r.id,
+            r.match_id,
+            r.pool_id,
+            r.pool_code,
+            r.combination,
+            r.combination_desc,
+            r.goal_line,
+            r.odds,
+            r.created_at,
+            m.match_num_str,
+            m.full_score,
+            ht.abbr_name AS homeTeamName,
+            at.abbr_name AS awayTeamName
+        FROM
+            biz_match_results r
+                LEFT JOIN biz_matches m ON r.match_id = m.match_id
+                LEFT JOIN biz_teams ht ON m.home_team_id = ht.team_id
+                LEFT JOIN biz_teams at ON m.away_team_id = at.team_id
+            ${ew.customSqlSegment}
+    </select>
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.biz.mapper.BizTransactionsMapper">
+
+
+    <!-- 【核心新增】根据时间范围统计指定用户的佣金总额 -->
+    <select id="sumCommissionByTimeRange" resultType="java.math.BigDecimal">
+        SELECT SUM(amount)
+        FROM biz_transactions
+        WHERE user_id = #{userId}
+        AND transaction_type = 'COMMISSION'
+        AND
+        <choose>
+            <when test="timeRange == 'today'">
+                DATE(create_time) = CURDATE()
+            </when>
+            <when test="timeRange == 'this_month'">
+                YEAR(create_time) = YEAR(CURDATE()) AND MONTH(create_time) = MONTH(CURDATE())
+            </when>
+            <otherwise>
+                1=1
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="selectMyHistoryPage" resultType="org.dromara.biz.domain.vo.TransactionHistoryVo">
+        SELECT
+        t1.id,
+        t1.transaction_type as transactionType,
+        t1.amount,
+        t1.remarks,
+        t1.status,
+        t1.created_at as createdAt
+        FROM
+        biz_transactions t1
+        WHERE
+        t1.user_id = #{userId}
+        <!-- 动态筛选条件 -->
+        <if test="bo.status != null and bo.status != ''">
+            AND t1.status = #{bo.status}
+        </if>
+        <if test="bo.transactionType != null and bo.transactionType != ''">
+            AND t1.transaction_type = #{bo.transactionType}
+        </if>
+        ORDER BY
+        t1.created_at DESC
+    </select>
+
+</mapper>

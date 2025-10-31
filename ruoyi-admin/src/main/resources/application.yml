@@ -1,0 +1,342 @@
+--- # 监控中心配置
+spring.boot.admin.client:
+  # 增加客户端开关
+  enabled: false
+  url: http://localhost:9090/admin
+  instance:
+    service-host-type: IP
+    metadata:
+      username: ${spring.boot.admin.client.username}
+      userpassword: ${spring.boot.admin.client.password}
+  username: @monitor.username@
+  password: @monitor.password@
+
+
+--- # 监控中心配置
+spring.boot.admin.client:
+  # 增加客户端开关
+  enabled: false
+  url: http://localhost:9090/admin
+  instance:
+    service-host-type: IP
+    metadata:
+      username: ${spring.boot.admin.client.username}
+      userpassword: ${spring.boot.admin.client.password}
+  username: @monitor.username@
+  password: @monitor.password@
+
+
+# 项目相关配置
+ruoyi:
+  # 名称
+  name: football
+  # 版本
+  version: ${revision}
+  # 版权年份
+  copyrightYear: 2025
+
+captcha:
+  enable: true
+  # 页面 <参数设置> 可开启关闭 验证码校验
+  # 验证码类型 math 数组计算 char 字符验证
+  type: MATH
+  # line 线段干扰 circle 圆圈干扰 shear 扭曲干扰
+  category: CIRCLE
+  # 数字验证码位数
+  numberLength: 1
+  # 字符验证码长度
+  charLength: 4
+
+# 开发环境配置
+server:
+  # 服务器的HTTP端口，默认为8080
+  port: 8080
+  servlet:
+    # 应用的访问路径
+    context-path: /
+  # undertow 配置
+  undertow:
+    # HTTP post内容的最大大小。当值为-1时，默认值为大小是无限的
+    max-http-post-size: -1
+    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
+    # 每块buffer的空间大小,越小的空间被利用越充分
+    buffer-size: 512
+    # 是否分配的直接内存
+    direct-buffers: true
+    threads:
+      # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程
+      io: 8
+      # 阻塞任务线程池, 当执行类似servlet请求阻塞操作, undertow会从这个线程池中取得线程,它的值设置取决于系统的负载
+      worker: 256
+
+# 日志配置
+logging:
+  level:
+    org.dromara: @logging.level@
+    org.springframework: warn
+    org.mybatis.spring.mapper: error
+    org.apache.fury: warn
+  config: classpath:logback-plus.xml
+
+# 用户配置
+user:
+  password:
+    # 密码最大错误次数
+    maxRetryCount: 5
+    # 密码锁定时间（默认10分钟）
+    lockTime: 10
+
+# Spring配置
+spring:
+  application:
+    name: ${ruoyi.name}
+  threads:
+    # 开启虚拟线程 仅jdk21可用
+    virtual:
+      enabled: false
+  # 资源信息
+  messages:
+    # 国际化资源文件路径
+    basename: i18n/messages
+  profiles:
+    active: dev
+  # 文件上传
+  servlet:
+    multipart:
+      # 单个文件大小
+      max-file-size: 100MB
+      # 设置总上传的文件大小
+      max-request-size: 200MB
+      enabled: true
+  mvc:
+    # 设置静态资源路径 防止所有请求都去查静态资源
+    static-path-pattern: /static/**
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+  jackson:
+    # 日期格式化
+    date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      # 格式化输出
+      indent_output: false
+      # 忽略无法转换的对象
+      fail_on_empty_beans: false
+    deserialization:
+      # 允许对象忽略json中不存在的属性
+      fail_on_unknown_properties: false
+
+
+# Sa-Token配置
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: Authorization
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: false
+  # jwt秘钥
+  jwt-secret-key: zzcd3tghijklmlopq4stu9wxyz
+
+# security配置
+security:
+  # 排除路径
+  excludes:
+    - /*.html
+    - /**/*.html
+    - /**/*.css
+    - /**/*.js
+    - /favicon.ico
+    - /error
+    - /*/api-docs
+    - /*/api-docs/**
+    - /warm-flow-ui/token-name
+
+# 多租户配置
+tenant:
+  # 是否开启
+  enable: true
+  # 排除表
+  excludes:
+    - sys_menu
+    - sys_tenant
+    - sys_tenant_package
+    - sys_role_dept
+    - sys_role_menu
+    - sys_user_post
+    - sys_user_role
+    - sys_client
+    - sys_oss_config
+    - biz_bet_types
+    - biz_leagues
+    - biz_matches
+    - biz_odds
+    - biz_referrals
+    - biz_sports
+    - biz_teams
+    - biz_transactions
+    - biz_user_bets
+    - biz_users
+    - biz_user_follows
+    - biz_scheme_period_details
+    - biz_scheme_periods
+    - biz_schemes
+    - biz_user_wallets
+    - biz_wallet_transactions
+    - biz_system_reserve
+    - biz_system_reserve_summary
+    - biz_deposit_wallets
+    - biz_user_follow_details
+    - biz_user_invitations
+    - biz_invitation_codes
+    - biz_app_version
+    - biz_app_versions
+    - biz_device_updates
+    - biz_chain_sync_state
+    - biz_scheme_period_stats
+    - biz_bet_orders
+    - biz_bet_order_details
+
+
+# MyBatisPlus配置
+# https://baomidou.com/config/
+mybatis-plus:
+  # 自定义配置 是否全局开启逻辑删除 关闭后 所有逻辑删除功能将失效
+  enableLogicDelete: true
+  # 多包名使用 例如 org.dromara.**.mapper,org.xxx.**.mapper
+  mapperPackage: org.dromara.**.mapper
+  # 对应的 XML 文件位置
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+  # 实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: org.dromara.**.domain
+  global-config:
+    dbConfig:
+      # 主键类型
+      # AUTO 自增 NONE 空 INPUT 用户输入 ASSIGN_ID 雪花 ASSIGN_UUID 唯一 UUID
+      # 如需改为自增 需要将数据库表全部设置为自增
+      idType: ASSIGN_ID
+
+# 数据加密
+mybatis-encryptor:
+  # 是否开启加密
+  enable: false
+  # 默认加密算法
+  algorithm: BASE64
+  # 编码方式 BASE64/HEX。默认BASE64
+  encode: BASE64
+  # 安全秘钥 对称算法的秘钥 如：AES，SM4
+  password:
+  # 公私钥 非对称算法的公私钥 如：SM2，RSA
+  publicKey:
+  privateKey:
+
+springdoc:
+  api-docs:
+    # 是否开启接口文档
+    enabled: false
+  info:
+    # 标题
+    title: '接口文档'
+    # 描述
+    description: '描述'
+    # 版本
+    version: '版本号'
+    # 作者信息
+    contact:
+      name: football
+      email: tttt@163.com
+      url: https://gitee.com
+  components:
+    # 鉴权方式配置
+    security-schemes:
+      apiKey:
+        type: APIKEY
+        in: HEADER
+        name: ${sa-token.token-name}
+  #这里定义了两个分组，可定义多个，也可以不定义
+  group-configs:
+    - group: a
+      packages-to-scan: org.dromara.demo
+#    - group: b
+#      packages-to-scan: org.dromara.web
+#    - group: c
+#      packages-to-scan: org.dromara.system
+#    - group: d
+#      packages-to-scan: org.dromara.generator
+#    - group: e
+#      packages-to-scan: org.dromara.workflow
+#    - group: fornttt
+#      packages-to-scan: org.dromara.biz.app
+
+# 防止XSS攻击
+xss:
+  # 过滤开关
+  enabled: true
+  # 排除链接（多个用逗号分隔）
+  excludeUrls:
+    - /system/notice
+    - /warm-flow/save-xml
+
+# 全局线程池相关配置
+# 如使用JDK21请直接使用虚拟线程 不要开启此配置
+thread-pool:
+  # 是否开启线程池
+  enabled: false
+  # 队列最大长度
+  queueCapacity: 128
+  # 线程池维护线程所允许的空闲时间
+  keepAliveSeconds: 300
+
+--- # 分布式锁 lock4j 全局配置
+lock4j:
+  # 获取分布式锁超时时间，默认为 3000 毫秒
+  acquire-timeout: 3000
+  # 分布式锁的超时时间，默认为 30 秒
+  expire: 30000
+
+--- # Actuator 监控端点的配置项
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: NEVER
+    logfile:
+      external-file: ./logs/sys-console.log
+
+--- # websocket
+websocket:
+  # 如果关闭 需要和前端开关一起关闭
+  enabled: false
+  # 路径
+  path: /resource/websocket
+  # 设置访问源地址
+  allowedOrigins: '*'
+
+
+# api接口加密
+api-decrypt:
+  # 是否开启全局接口加密
+  enabled: true
+  # AES 加密头标识
+  headerFlag: encrypt-key
+  publicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnj7ardHipMR5ivhjSemFQ32osTNX81Z/SLup5dImGhhUQOYxii7aeL09+KuySgI7G6daoTR0hLsWPvkVO50PEJdGq/GZ0pmOFj39CxZZwj0EKnZ0V/WeqGwHSdSvmoCmPvUT3JBsQMd4NoAngEJHbZ3B8ADfM8rGbqup6rS9ZULhxy98ukMqUqWSwQ4mL9U8dXAHJm2J+XskAxLmJLY//ss0cktaA+4Ee/mvz/TyzxMNT/wGt+tzIZFJO9p7yL0Km8739V8Y4o+/f6Si032Td6U9VuOJfmeYmDyjeHhdBX9qj5+eAIRDKsjfGxWeUObMS35AeFFfZGB0F06EpizpwwIDAQAB
+  # 请求解密私钥 非对称算法的公私钥 如：SM2，RSA 使用者请自行更换
+  # 对应前端加密公钥 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwE3M+KftxKOuY/ioGC6KpT2LWOwZTPNOt+npBh13fT+HG4+xBhhxwf+IZ0km+aRewUYUlhof/LUCo2h5aKjGwGjkg4REQW0XvactFCPFIm3lWyYS4ZrvOQX5aqSHhPQ6Ts0SA90iOPhRkzTAQcoB19ZvznvgVTzHmigrhWmQgbh/E3Sg486TjKn37cYWLhj9bg94UmcyRMfYd2K+0r6M7scWlXYZ7tnDf5zveAl6s6HUWdwyuDsTXmChjDacYwHYtrvWvNSbgc3OBxPDybsyaa3PhwMLgzsv52WU8fIofunOxTPo/MrLJOa2gbRkV1XjZp1FRCB9XB1lsHrNjL8JpQIDAQAB
+  privateKey: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDATcz4p+3Eo65j+KgYLoqlPYtY7BlM80636ekGHXd9P4cbj7EGGHHB/4hnSSb5pF7BRhSWGh/8tQKjaHloqMbAaOSDhERBbRe9py0UI8UibeVbJhLhmu85BflqpIeE9DpOzRID3SI4+FGTNMBBygHX1m/Oe+BVPMeaKCuFaZCBuH8TdKDjzpOMqfftxhYuGP1uD3hSZzJEx9h3Yr7SvozuxxaVdhnu2cN/nO94CXqzodRZ3DK4OxNeYKGMNpxjAdi2u9a81JuBzc4HE8PJuzJprc+HAwuDOy/nZZTx8ih+6c7FM+j8yssk5raBtGRXVeNmnUVEIH1cHWWwes2MvwmlAgMBAAECggEAIQZ7eAym6clObr7KZ3S+vMgIAVpyseNrFmymZzVySuE5G8OenDRgfPecflhyyBaxazHU4T5VVfnkHRoZF588mtioveleK3pHxHtMY5QNC++hnvi372TDRqC/B9B/sZab2OKhAGbetLf4knZRujqt/FpIU0a07Q6GHPRfHQdXGN/Ah/tgT76g97EQcA9VA0CnP2e6cY1wril2QCl7sSkhFF97acdotajEe31m+8MEjveQwPwcjJYdVI1UGRFUlXt1KzTVDz8NDdMKVjt6/G2TqDGSl2bT1Z5D2FFCY3O0qP87xqfkLZGFzaxfk3D3fPS/XLvZCeePEr4LdBL6RzuK1QKBgQD/CClP1hf54+Cwp4XYeZv5St6aXb0//r+DPgQ+xluxdNJCzzSXMWSTdj4NFdghsKrJFknlHxwGbhcecL8FDVN9UoFYmeLkZC0JLpZSVFyyIBZraF+WddhIW8lILiULWG9BTLPhiGcN2/suOCa4CcDr7z70Wj9CyGLjVKXyuD/b+wKBgQDBCK462exasVCoB92MARpETRDYSSShSTyGOfGe/YPDt/4/rEML2Rr52eF6V5fmTn/0h1siHZ8EsIoYLAQe1WVUTXXUXNoB+U0nKwPABfjN5nBRvfAmRlDhKdNT6doqzekOHxhnltVA4rKvkqrs4Q7aLpQF80KUb/4mU/Ok5VUe3wKBgQCkcovI+iFdtg4FexA4ZTopBpkBat6EbGzrYMr1+4vWoqCOCfQ8ZdIXsBAU+ffyyWtm3ONrRaMZllV8AHF7/XrPfasACcKfSOUtXYf6sIFRLpWmTpgMehKrndvtmiuy5CRhM+dtzzm8WxPdWsHEvC1VNWEfyS2vj20Mb2HOX/Z1jwKBgQCx6wNTwQrFaMtTpLRB175TF8kf4QK/GdaMTRn0Fex917ejDm5ZnEjt4zGc5uFd6Bqt0phf8HdiBimyL9e4Z63WrvKcwtw5l4PSRyZUtexmMzBxVyTi0kq3zio3HML2UwWs+2IuEGsMPCbABuo+HQ3ocagDd/x0/mh9AUH/SVVUdwKBgGpfZm3bQjHq1l3Ng/qtbg4sW99IwPhVRKEuEFLn/CR2lPxI/mt47xeDq8o2erqLXkE1V1JP93jMGbolnCJVG5/RcbhoSJA5eEvJDR7W2w22cEEgO7xsTVl8n78P0/05aJisbUl3W2e4EqHep/4QkTF6/lnwvhfeMotVsl2RFD5/
+
+
+#bscscan:
+#  api-url: "https://api.etherscan.io/v2/api"
+#  api-key: "U6Q93R3G9GABX9HDSQHXV915UBVJ7FH5NZ"
+#  usdt-contract-address: "0x55d398326f99059fF775485246999027B3197955"
+#  chain-id: 56
+#  wssUrl: wss://bsc-ws-node.nariox.org:443
+
+bscscan:
+  api-url: "https://api.etherscan.io/v2/api"
+  api-key: "U6Q93R3G9GABX9HDSQHXV915UBVJ7FH5NZ"
+  usdt-contract-address: "0xF761eA5f045eCB07d2bB57ce6C87D98d9FE4EAc0"
+  chain-id: 97
+  wssUrl: wss://bsc-testnet.publicnode.com

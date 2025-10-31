@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.biz.mapper.BizUserFollowsMapper">
+
+    <!-- 【核心修改】使其返回包含兩個總和的 Map -->
+    <select id="selectSumBetAmount" resultType="map">
+        SELECT
+            ifnull(SUM(bet_amount),0) AS totalBetAmount,
+            ifnull(SUM(payout_amount),0) AS totalPayoutAmount
+        FROM biz_user_follows ${ew.customSqlSegment}
+    </select>
+    <select id="selectUserLastSettledFollow" resultType="org.dromara.biz.domain.vo.BizUserFollowsVo">
+        SELECT f.*, p.status as period_status
+        FROM biz_user_follows f
+                 JOIN biz_scheme_periods p ON f.period_id = p.period_id
+        WHERE f.user_id = #{userId}
+          AND f.status = 'settled'
+        ORDER BY f.follow_id DESC
+            LIMIT 1
+    </select>
+
+    <select id="sumUserAmountForLostPeriodsAfter" resultType="java.math.BigDecimal">
+        SELECT SUM(f.bet_amount)
+        FROM biz_user_follows f
+        JOIN biz_scheme_periods p ON f.period_id = p.period_id
+        WHERE f.user_id = #{userId}
+        AND p.status = 'lost'
+        <if test="periodId != null and periodId > 0">
+            AND p.period_id > #{periodId}
+        </if>
+    </select>
+
+    <!-- 核心修改：新增一个专门为单个用户统计单数的SQL -->
+    <select id="countUserAmountForLostPeriodsAfter" resultType="java.lang.Long">
+        SELECT COUNT(f.follow_id)
+        FROM biz_user_follows f
+        JOIN biz_scheme_periods p ON f.period_id = p.period_id
+        WHERE f.user_id = #{userId}
+        AND p.status = 'lost'
+        <if test="periodId != null and periodId > 0">
+            AND p.period_id > #{periodId}
+        </if>
+    </select>
+
+    <select id="sumAmountByPeriodIdAndUserId" resultType="java.math.BigDecimal">
+        SELECT SUM(bet_amount) FROM biz_user_follows
+        WHERE period_id = #{periodId} AND user_id = #{userId}
+    </select>
+
+    <select id="countForLostPeriodsAfter" resultType="java.lang.Long">
+        SELECT COUNT(f.follow_id)
+        FROM biz_user_follows f
+        JOIN biz_scheme_periods p ON f.period_id = p.period_id
+        WHERE p.status = 'lost'
+        <if test="periodId != null and periodId > 0">
+            AND p.period_id > #{periodId}
+        </if>
+    </select>
+
+<!--    <select id="selectUserLastSettledFollow" resultType="org.dromara.biz.domain.vo.BizUserFollowsVo">-->
+<!--        SELECT f.*, p.status as period_status-->
+<!--        FROM biz_user_follows f-->
+<!--                 JOIN biz_scheme_periods p ON f.period_id = p.period_id-->
+<!--        WHERE f.user_id = #{userId}-->
+<!--          AND p.status IN ('won', 'lost')-->
+<!--        ORDER BY f.created_at DESC-->
+<!--            LIMIT 1-->
+<!--    </select>-->
+
+<!--    <select id="sumAmountForLostPeriodsAfter" resultType="java.math.BigDecimal">-->
+<!--        SELECT SUM(f.bet_amount)-->
+<!--        FROM biz_user_follows f-->
+<!--        JOIN biz_scheme_periods p ON f.period_id = p.period_id-->
+<!--        WHERE f.user_id = #{userId}-->
+<!--        AND p.status = 'lost'-->
+<!--        <if test="periodId != null and periodId > 0">-->
+<!--            AND p.period_id > #{periodId}-->
+<!--        </if>-->
+<!--    </select>-->
+
+<!--    <select id="sumAmountByPeriodIdAndUserId" resultType="java.math.BigDecimal">-->
+<!--        SELECT SUM(bet_amount) FROM biz_user_follows-->
+<!--        WHERE period_id = #{periodId} AND user_id = #{userId}-->
+<!--    </select>-->
+
+    <select id="sumAmountForLostPeriodsAfter" resultType="java.math.BigDecimal">
+        SELECT SUM(f.bet_amount)
+        FROM biz_user_follows f
+        JOIN biz_scheme_periods p ON f.period_id = p.period_id
+        WHERE p.status = 'lost'
+        <if test="periodId != null and periodId > 0">
+            AND p.period_id > #{periodId}
+        </if>
+    </select>
+
+<!--    <select id="selectSumAmountByPeriodId" resultType="java.math.BigDecimal">-->
+<!--        SELECT SUM(bet_amount) FROM biz_user_follows WHERE period_id = #{periodId}-->
+<!--    </select>-->
+
+    <select id="sumAmountByPeriodStatus" resultType="java.math.BigDecimal">
+        SELECT SUM(f.bet_amount)
+        FROM biz_user_follows f
+                 JOIN biz_scheme_periods p ON f.period_id = p.period_id
+        WHERE p.status = #{status}
+    </select>
+
+    <select id="selectSumAmountByPeriodId" resultType="java.math.BigDecimal">
+        SELECT SUM(bet_amount) FROM biz_user_follows WHERE period_id = #{periodId}
+    </select>
+
+    <select id="selectMyFollowsPage" resultType="org.dromara.biz.domain.vo.BizUserFollowsVo">
+        SELECT
+        f.follow_id,
+        f.user_id,
+        f.period_id,
+        f.bet_amount,
+        f.status,
+        f.payout_amount,
+        f.created_at,
+        f.result_status,
+        f.remark
+        FROM
+        biz_user_follows f
+        LEFT JOIN biz_scheme_periods p ON f.period_id = p.period_id
+        <where>
+            <if test="bo.userId != null">
+                AND f.user_id = #{bo.userId}
+            </if>
+            <if test="bo.status != null and bo.status != ''">
+                AND f.status = #{bo.status}
+            </if>
+        </where>
+        ORDER BY f.created_at DESC
+    </select>
+</mapper>

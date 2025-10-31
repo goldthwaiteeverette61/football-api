@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.biz.mapper.BizSchemePeriodsMapper">
+    <select id="selectLastWonPeriodByUserId" resultType="org.dromara.biz.domain.vo.BizSchemePeriodsVo">
+        SELECT p.*
+        FROM biz_scheme_periods p
+                 JOIN biz_user_follows f ON p.period_id = f.period_id
+        WHERE f.user_id = #{userId}
+          AND p.status = 'won'
+        ORDER BY p.period_id DESC
+            LIMIT 1
+    </select>
+
+    <select id="findLostPeriodsAfter" resultType="org.dromara.biz.domain.vo.BizSchemePeriodsVo">
+        SELECT
+            p.period_id,
+            p.name
+        FROM
+            biz_scheme_periods p
+                JOIN
+            biz_user_follows f ON p.period_id = f.period_id
+        WHERE
+            f.user_id = #{userId}
+          AND f.result_status = 'lost'
+          AND p.period_id > #{periodId}
+        ORDER BY
+            p.period_id ASC
+    </select>
+</mapper>

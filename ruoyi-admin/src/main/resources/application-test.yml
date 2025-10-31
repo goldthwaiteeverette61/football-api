@@ -1,0 +1,69 @@
+# --- snail-job 配置 (測試時停用) ---
+snail-job:
+  enabled: false
+
+
+# --- 數據源配置 (切換為 H2 記憶體資料庫) ---
+spring:
+  boot:
+    admin:
+      client:
+        enabled: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 2  # 使用不同的資料庫，避免與開發數據衝突
+      password: 123456
+      timeout: 10s
+      ssl:
+        enabled: false
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    dynamic:
+      p6spy: false # 測試時通常關閉 P6Spy 以提升性能
+      primary: master
+      strict: true
+      datasource:
+        master:
+          type: ${spring.datasource.type}
+          driverClassName: org.h2.Driver
+          url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+          username: sa
+          password: ""
+
+# redisson 配置
+redisson:
+  keyPrefix: "test" # 為測試資料增加獨立前置詞
+  threads: 4
+  nettyThreads: 8
+  singleServerConfig:
+    clientName: ruoyi-test
+    connectionMinimumIdleSize: 4
+    connectionPoolSize: 16
+    idleConnectionTimeout: 10000
+    timeout: 3000
+    subscriptionConnectionPoolSize: 10
+
+# --- mail 郵件發送 (測試時停用) ---
+mail:
+  enabled: false
+
+# --- sms 短信 (測試時停用) ---
+sms:
+  config-type: yaml
+  restricted: false
+
+# --- 三方授權 (測試時通常需要 Mock，此處保留結構) ---
+justauth:
+  address: http://localhost:80
+  # ... 其他三方授權配置 ...
+
+
+# --- api接口加密 (測試時停用，方便調試) ---
+api-decrypt:
+  enabled: false
+
+# --- 租戶功能 (測試時停用) ---
+tenant:
+  enable: false

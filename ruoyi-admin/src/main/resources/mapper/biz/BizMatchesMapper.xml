@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.biz.mapper.BizMatchesMapper">
+
+    <select id="selectMatchesForLiveScoreUpdate" resultType="org.dromara.biz.domain.vo.BizMatchesVo">
+        SELECT *
+        FROM biz_matches
+        WHERE match_id IN (
+            -- 条件一：查询所有 'pending' 方案中的比赛ID
+            SELECT DISTINCT d.match_id
+            FROM biz_scheme_periods p
+                     JOIN biz_scheme_period_details d ON p.period_id = d.period_id
+            WHERE p.status = 'pending'
+            UNION
+            -- 条件二：查询时间范围内未结束的比赛ID
+            SELECT match_id
+            FROM biz_matches
+            WHERE status NOT IN ('Payout', 'Cancelled')
+              AND match_datetime BETWEEN #{startTime} AND #{endTime}
+        )
+    </select>
+
+
+    <!-- 查询用于足球计算器页面的比赛列表 -->
+    <select id="selectCalculatorMatchList" parameterType="org.dromara.biz.domain.bo.BizMatchesBo" resultType="org.dromara.biz.domain.vo.BizMatchesVo">
+        SELECT
+        m.match_id,
+        m.match_num_str,
+        m.business_date,
+        m.match_datetime,
+        l.abbr_name AS leagueName,
+        ht.abbr_name AS homeTeamName,
+        ht.ranks AS homeRanks,
+        at.abbr_name AS awayTeamName,
+        at.ranks AS awayRanks,
+        m.home_team_id as homeTeamId,
+        m.away_team_id as awayTeamId
+        FROM
+        biz_matches m
+        LEFT JOIN biz_leagues l ON m.league_id = l.league_id
+        LEFT JOIN biz_teams ht ON m.home_team_id = ht.team_id
+        LEFT JOIN biz_teams at ON m.away_team_id = at.team_id
+        <where>
+            <if test="bo.status != null and bo.status != ''">
+                AND m.status = #{bo.status}
+            </if>
+            <if test="bo.businessDate != null">
+                AND m.business_date = #{bo.businessDate}
+            </if>
+        </where>
+        ORDER BY
+        m.business_date ASC, m.match_datetime ASC
+    </select>
+
+    <!-- 根据条件查询赔率列表 -->
+    <select id="queryList" resultType="org.dromara.biz.domain.vo.BizOddsVo">
+        SELECT * FROM biz_odds
+        <where>
+            <if test="bo.matchId != null">
+                AND match_id = #{bo.matchId}
+            </if>
+            <if test="bo.matchIds != null and !bo.matchIds.isEmpty()">
+                AND match_id IN
+                <foreach item="item" collection="bo.matchIds" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="bo.poolCode != null and bo.poolCode != ''">
+                AND pool_code = #{bo.poolCode}
+            </if>
+            <if test="bo.poolCodes != null and !bo.poolCodes.isEmpty()">
+                AND pool_code IN
+                <foreach item="item" collection="bo.poolCodes" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>
