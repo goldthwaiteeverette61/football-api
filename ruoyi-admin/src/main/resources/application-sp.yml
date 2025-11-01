@@ -279,7 +279,7 @@ api-decrypt:
 
 bscscan:
   api-url: "https://api.etherscan.io/v2/api"
-  api-key: "8XDC8NCGU3KXEQN64WN9UAV68BFT4FV8IF"
+  api-key: "U6Q93R3G9GABX9HDSQHXV915UBVJ7FH5NZ"
   usdt-contract-address: "0x55d398326f99059fF775485246999027B3197955"
   chain-id: 56
   wssUrl: wss://bsc-ws.nodereal.io:3659
