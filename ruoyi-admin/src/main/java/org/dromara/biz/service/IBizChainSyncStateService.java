@@ -23,14 +23,14 @@ public interface IBizChainSyncStateService {
      * @param chainName 链名称 (例如: "BSC")
      * @return 区块号
      */
-    long getLastSyncedBlock(String chainName);
+    long getLastSyncedBlock(String chainName,int chainId);
 
     /**
      * 更新指定链的最后同步区块号
      * @param chainName 链名称
      * @param blockNumber 新的区块号
      */
-    void updateLastSyncedBlock(String chainName, long blockNumber);
+    void updateLastSyncedBlock(String chainName,int chainId, long blockNumber);
 
     /**
      * 查询区块链同步状态

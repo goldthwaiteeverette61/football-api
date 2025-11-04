@@ -36,9 +36,9 @@ public class BizChainSyncStateServiceImpl extends BaseImpl<BizChainSyncState,Biz
     private final BizChainSyncStateMapper baseMapper;
 
     @Override
-    public long getLastSyncedBlock(String chainName) {
+    public long getLastSyncedBlock(String chainName,int chainId) {
         LambdaQueryWrapper<BizChainSyncState> lqw = Wrappers.lambdaQuery();
-        lqw.eq(BizChainSyncState::getChainName, chainName);
+        lqw.eq(BizChainSyncState::getChainName, chainName).eq(BizChainSyncState::getChainId, chainId);
         BizChainSyncState state = baseMapper.selectOne(lqw);
 
         if (state == null) {
@@ -50,7 +50,7 @@ public class BizChainSyncStateServiceImpl extends BaseImpl<BizChainSyncState,Biz
     }
 
     @Override
-    public void updateLastSyncedBlock(String chainName, long blockNumber) {
+    public void updateLastSyncedBlock(String chainName,int chainId, long blockNumber) {
         LambdaUpdateWrapper<BizChainSyncState> luw = Wrappers.lambdaUpdate();
 
         luw.set(BizChainSyncState::getLastSyncedBlock, blockNumber)

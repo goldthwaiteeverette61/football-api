@@ -126,7 +126,7 @@ public class ZgzcwDataProcessor {
     @Transactional(rollbackFor = Exception.class)
     public void saveMatchData(MatchData data) {
         if (data.getNewplayId() == null || data.getNewplayId().isEmpty()) {
-            log.warn("跳過一筆沒有 newplayId 的比賽記錄, sportteryMatchId: {}", data.getMatchId());
+//            log.warn("跳過一筆沒有 newplayId 的比賽記錄, sportteryMatchId: {}", data.getMatchId());
             return;
         }
 

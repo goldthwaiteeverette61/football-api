@@ -33,6 +33,11 @@ public class BizChainSyncStateBo extends BaseEntity {
     private String chainName;
 
     /**
+     * 链id
+     */
+    private int chainId;
+
+    /**
      * 最後成功同步的區塊號
      */
     @NotNull(message = "最後成功同步的區塊號不能爲空", groups = { AddGroup.class, EditGroup.class })

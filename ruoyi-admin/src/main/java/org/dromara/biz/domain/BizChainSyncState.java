@@ -33,6 +33,11 @@ public class BizChainSyncState extends BaseEntity {
     private String chainName;
 
     /**
+     * 链id
+     */
+    private int chainId;
+
+    /**
      * 最后成功同步的区块号
      */
     private Long lastSyncedBlock;

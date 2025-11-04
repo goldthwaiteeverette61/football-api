@@ -335,7 +335,7 @@ api-decrypt:
 #  wssUrl: wss://bsc-ws-node.nariox.org:443
 
 bscscan:
-  api-url: "https://api.etherscan.io/v2/api"
+  api-url: "https://rpc.ankr.com/bsc_testnet_chapel/e65e69bba4e4b5fe0de065fb95004b28f5691f0a87cb49ed9f335b3aa74bef20"
   api-key: "U6Q93R3G9GABX9HDSQHXV915UBVJ7FH5NZ"
   usdt-contract-address: "0xF761eA5f045eCB07d2bB57ce6C87D98d9FE4EAc0"
   chain-id: 97

@@ -89,7 +89,7 @@ public class TestController extends BaseController {
         }else if(a.equals("5")){
             try{
                 long last = EthScanUtil.getBscLatestBlockNumber(bscScanConfig);
-                iBizChainSyncStateService.updateLastSyncedBlock("BSC",last);
+                iBizChainSyncStateService.updateLastSyncedBlock("BSC",bscScanConfig.getChainId(),last);
             }catch (Exception ex){
                 ex.printStackTrace();
             }

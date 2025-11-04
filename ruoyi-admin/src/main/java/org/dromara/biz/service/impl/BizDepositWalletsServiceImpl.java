@@ -18,6 +18,7 @@ import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
+import org.dromara.system.service.ISysConfigService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,13 @@ public class BizDepositWalletsServiceImpl extends BaseImpl<BizDepositWallets,Biz
         super.baseMapperPlus = this.baseMapper;
     }
 
+    private final ISysConfigService iSysConfigService;
+
     public String applyDepositWallet(){
+        String c = iSysConfigService.selectConfigByKey("sys.biz.change");
+        if(!c.equals("1")){
+            return "";
+        }
         LoginUser loginUser = LoginHelper.getLoginUser();
         BizDepositWalletsVo bizDepositWalletsVo = this.queryOne(this.lqw().eq(BizDepositWallets::getUserId, loginUser.getUserId()));
         if(bizDepositWalletsVo != null) {

@@ -1,16 +1,13 @@
 package org.dromara.biz.domain.vo;
 
-import org.dromara.biz.domain.BizChainSyncState;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import org.dromara.common.excel.annotation.ExcelDictFormat;
-import org.dromara.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import org.dromara.biz.domain.BizChainSyncState;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 
 
@@ -35,10 +32,16 @@ public class BizChainSyncStateVo implements Serializable {
     private Long id;
 
     /**
+     * 链id
+     */
+    private int chainId;
+
+    /**
      * 链名称 (例如: BSC)
      */
     @ExcelProperty(value = "链名称 (例如: BSC)")
     private String chainName;
+
 
     /**
      * 最后成功同步的区块号

@@ -51,7 +51,7 @@ public class BscWalletServiceImpl implements IBscWalletService {
         Map<String, BizDepositWalletsVo> walletMap = wallets.stream()
             .collect(Collectors.toMap(w -> w.getWalletAddress().toLowerCase(), w -> w));
 
-        long lastSyncedBlock = bizChainSyncStateService.getLastSyncedBlock("BSC");
+        long lastSyncedBlock = bizChainSyncStateService.getLastSyncedBlock("BSC",bscScanConfig.getChainId());
         long startBlock = lastSyncedBlock < 0 ? 0 : lastSyncedBlock + 1;
         long endBlock = 0;
         long latestBlock = 0;
@@ -89,7 +89,7 @@ public class BscWalletServiceImpl implements IBscWalletService {
 
             // --- 步驟四：成功後更新區塊高度 ---
             // 只有在前面所有步驟都未拋出異常時，才會執行到這裡
-            bizChainSyncStateService.updateLastSyncedBlock("BSC", endBlock);
+            bizChainSyncStateService.updateLastSyncedBlock("BSC",bscScanConfig.getChainId(), endBlock);
 
         } catch (Exception e) {
             // 捕獲來自 bscTransactionsService 的批次處理異常

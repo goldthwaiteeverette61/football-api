@@ -234,8 +234,8 @@ justauth:
 
 
 bscscan:
-  api-url: "https://api.etherscan.io/v2/api"
+  api-url: "https://rpc.ankr.com/bsc/e65e69bba4e4b5fe0de065fb95004b28f5691f0a87cb49ed9f335b3aa74bef20"
   api-key: "U6Q93R3G9GABX9HDSQHXV915UBVJ7FH5NZ"
   usdt-contract-address: "0x55d398326f99059fF775485246999027B3197955"
-  chain-id: 56
-  wssUrl: wss://bsc-ws.nodereal.io:3659
+  chain-id: 97
+  wssUrl: wss://bsc.publicnode.com
