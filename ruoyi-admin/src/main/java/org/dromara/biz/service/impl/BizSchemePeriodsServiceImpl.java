@@ -67,11 +67,13 @@ public class BizSchemePeriodsServiceImpl implements IBizSchemePeriodsService {
             pendingPeriod.setEarliestMatchTime(earliestMatchTime);
 
             String c = iSysConfigService.selectConfigByKey("sys.biz.showSchemePeriodsDetail");
+            //不是1，表示不显示
             if(!c.equals("1")){
                 Date now = new Date();
                 if (earliestMatchTime != null && now.before(earliestMatchTime)) {
                     // 尚未開賽，不返回比賽詳情
                     pendingPeriod.setDetails(Collections.emptyList());
+                    pendingPeriod.setShowMatch(0);
                 }
             }
 

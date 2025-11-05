@@ -88,5 +88,7 @@ public class BizSchemePeriodsVo implements Serializable {
     @TableField(exist = false) // 标记为非数据库字段
     private Date earliestMatchTime;
 
+    private int showMatch = 1;
+
     private List<BizSchemePeriodDetailsVo> details;
 }
