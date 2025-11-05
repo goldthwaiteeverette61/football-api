@@ -82,9 +82,9 @@ public class TestController extends BaseController {
             schemeSettlementJob.execute();
             bizBetOrdersService.settlePendingOrdersJob();
         }else if(a.equals("3")){
-            iBscWalletService.scanAllWallets();
+            return "不存在";
         }else if(a.equals("4")){
-            matchDataCollectionService.collectAndProcessMatches(-2,2);
+            matchDataCollectionService.collectAndProcessMatches();
             zgzcwDataProcessor.processAllPoolsAndSave();
         }else if(a.equals("5")){
             try{

@@ -37,13 +37,14 @@ import java.util.Map;
 public class BizDepositWalletsServiceImpl extends BaseImpl<BizDepositWallets,BizDepositWalletsVo> implements IBizDepositWalletsService {
 
     private final BizDepositWalletsMapper baseMapper;
+    private final ISysConfigService iSysConfigService;
 
     @PostConstruct
     public void init() {
         super.baseMapperPlus = this.baseMapper;
     }
 
-    private final ISysConfigService iSysConfigService;
+
 
     public String applyDepositWallet(){
         String c = iSysConfigService.selectConfigByKey("sys.biz.change");

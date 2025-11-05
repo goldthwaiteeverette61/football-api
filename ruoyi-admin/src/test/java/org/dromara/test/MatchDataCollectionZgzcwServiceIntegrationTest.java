@@ -34,7 +34,7 @@ class MatchDataCollectionZgzcwServiceIntegrationTest extends BaseIntegrationTest
 
         // --- 2. Act (執行) ---
         // 執行實際的採集方法
-        assertDoesNotThrow(() -> matchDataCollectionZgzcwService.collectAndProcessMatches(-1,2));
+        assertDoesNotThrow(() -> matchDataCollectionZgzcwService.collectAndProcessMatches());
 
         // --- 3. Assert (断言) ---
         // 由於遠端 API 的數據是動態變化的，我們驗證資料庫中是否成功寫入了數據，

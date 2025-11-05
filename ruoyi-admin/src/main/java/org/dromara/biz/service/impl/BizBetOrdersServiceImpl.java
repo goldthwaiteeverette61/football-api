@@ -77,7 +77,6 @@ public class BizBetOrdersServiceImpl extends BaseImpl<BizBetOrders, BizBetOrders
         );
 
         if (CollUtil.isEmpty(expiredOrders)) {
-            log.info("【定時任務-取消訂單】沒有需要作廢的超時DRAFT訂單。");
             return;
         }
 

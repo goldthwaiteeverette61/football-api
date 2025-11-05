@@ -54,7 +54,8 @@ public class BizChainSyncStateServiceImpl extends BaseImpl<BizChainSyncState,Biz
         LambdaUpdateWrapper<BizChainSyncState> luw = Wrappers.lambdaUpdate();
 
         luw.set(BizChainSyncState::getLastSyncedBlock, blockNumber)
-            .eq(BizChainSyncState::getChainName, chainName);
+            .eq(BizChainSyncState::getChainName, chainName)
+            .eq(BizChainSyncState::getChainId, chainId);
 
         baseMapper.update(null, luw);
     }

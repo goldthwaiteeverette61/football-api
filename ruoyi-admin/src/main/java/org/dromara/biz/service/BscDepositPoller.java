@@ -102,15 +102,7 @@ public class BscDepositPoller {
         long pollStartTime = System.currentTimeMillis(); // 日志时间
 
         try {
-            // ==================== 日志点 2: 扫描任务开始 ====================
-            log.info("[日志] ==> 轮询任务开始...");
-
-            // ==================== 日志点 3: 获取最新区块耗时 (网络操作) ====================
-            long getLatestBlockStart = System.currentTimeMillis();
             BigInteger latest = web3j.ethBlockNumber().send().getBlockNumber().subtract(BigInteger.valueOf(30));
-            long getLatestBlockEnd = System.currentTimeMillis();
-            log.info("[日志] ----> 获取最新区块 {} 耗时: {} ms", latest, (getLatestBlockEnd - getLatestBlockStart));
-            // ==========================================================
 
             // 9. 使用 long 类型的区块号进行计算
             endBlock = latest.longValue(); // 扫描到最新区块
@@ -122,7 +114,7 @@ public class BscDepositPoller {
                 return; // 正常退出，没有新块，无需更新
             }
 
-            log.info("\n[日志] 扫描区块范围: {} ~ {}", startBlock, endBlock);
+            log.info("\n[日志] 扫描区块范围: {} ~ {}(最新{}，偏差{})", startBlock, endBlock,latest,(latest.longValue() - endBlock));
 
             // ==================== 核心修改: 使用 ethGetLogs (网络操作) ====================
 
@@ -138,12 +130,9 @@ public class BscDepositPoller {
             filter.addNullTopic();                      // Topic 1: (from) 任意发送者
             // filter.addOptionalTopics(paddedAddresses); // 4. (已移除) 不再通过 RPC 过滤 'to' 地址
 
-            // ==================== 日志点 5: RPC 网络调用耗时 ====================
             long rpcCallStart = System.currentTimeMillis();
             ethLog = web3j.ethGetLogs(filter).send(); // <-- 执行 RPC 调用
             long rpcCallEnd = System.currentTimeMillis();
-            log.info("[日志] --------> ethGetLogs({}...{}) RPC耗时: {} ms", startBlock, endBlock, (rpcCallEnd - rpcCallStart));
-            // ==========================================================
 
         } catch (Exception e) {
             // 16. 捕获所有 RPC 和设置异常
@@ -177,7 +166,7 @@ public class BscDepositPoller {
 
         List<EthLog.LogResult> logs = ethLog.getLogs();
         if (logs == null || logs.isEmpty()) {
-            log.info("[日志] --------> 在此范围未发现相关日志");
+//            log.info("[日志] --------> 在此范围未发现相关日志");
             // 11. 即使没有日志，也要更新区块 (参考 BscWalletServiceImpl)
             // 这是此区块范围的唯一“写”操作，是事务性的
             bizChainSyncStateService.updateLastSyncedBlock("BSC", bscScanConfig.getChainId(), endBlock);

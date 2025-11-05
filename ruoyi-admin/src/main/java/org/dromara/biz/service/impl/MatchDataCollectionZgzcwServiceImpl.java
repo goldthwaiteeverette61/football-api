@@ -57,7 +57,9 @@ public class MatchDataCollectionZgzcwServiceImpl {
      * 【核心修改】主流程：從 zgzcw.com 採集多個日期的比賽信息
      * @description: 通過模擬 POST 請求來獲取不同日期的數據。
      */
-    public void collectAndProcessMatches(int start,int end) {
+    public void collectAndProcessMatches() {
+        int start= -2;
+        int end = 2;
         LocalDate today = LocalDate.now();
 
         // 【新增】在循環外先訪問一次主頁以獲取必要的 cookie
@@ -164,7 +166,7 @@ public class MatchDataCollectionZgzcwServiceImpl {
         if ("完".equals(matchJson.getStr("Status"))) {
             BizMatchesVo currentMatchInDb = bizMatchesService.queryById(matchId);
             if (currentMatchInDb != null && !"Payout".equals(currentMatchInDb.getStatus())) {
-                log.info("檢測到比賽ID: {} 已完賽，開始進行結算...", matchId);
+//                log.info("檢測到比賽ID: {} 已完賽，開始進行結算...", matchId);
                 currentMatchInDb.setFullScore(matchBo.getFullScore());
                 finalizeMatch(currentMatchInDb);
             }
@@ -351,7 +353,7 @@ public class MatchDataCollectionZgzcwServiceImpl {
             statusUpdateBo.setFullScore(matchToFinalize.getFullScore());
             bizMatchesService.updateByBo(statusUpdateBo);
 
-            log.info("比賽ID: {} 內部賽果生成並更新狀態為Payout成功！", matchId);
+//            log.info("比賽ID: {} 內部賽果生成並更新狀態為Payout成功！", matchId);
         } else {
             log.warn("未能為比賽ID: {} 生成任何賽果，結算中止。", matchId);
         }

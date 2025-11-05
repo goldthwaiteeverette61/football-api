@@ -2,6 +2,7 @@ package org.dromara.biz.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import org.dromara.biz.domain.BizSchemePeriods;
@@ -75,6 +76,17 @@ public class BizSchemePeriodsVo implements Serializable {
      */
     private Date deadlineTime;
 
+    /**
+     * 【新增】预期奖金区间 (例如: "3.00~6.00")
+     */
+    @TableField(exist = false) // 标记为非数据库字段
+    private String bonusRange;
+
+    /**
+     * 【新增】方案中最早的比赛开始时间
+     */
+    @TableField(exist = false) // 标记为非数据库字段
+    private Date earliestMatchTime;
 
     private List<BizSchemePeriodDetailsVo> details;
 }

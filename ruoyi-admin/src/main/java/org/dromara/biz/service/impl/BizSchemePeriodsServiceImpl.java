@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.biz.domain.BizSchemePeriods;
 import org.dromara.biz.domain.bo.BizSchemePeriodsBo;
 import org.dromara.biz.domain.vo.BizMatchesVo;
@@ -20,9 +21,12 @@ import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.system.service.ISysConfigService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,15 +39,18 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class BizSchemePeriodsServiceImpl implements IBizSchemePeriodsService {
 
     private final BizSchemePeriodsMapper baseMapper;
     private final IBizSchemePeriodDetailsService iBizSchemePeriodDetailsService;
     private final IBizMatchesService iBizMatchesService;
     private final IBizSchemePeriodDetailsService schemePeriodDetailsService;
+    private final ISysConfigService iSysConfigService;
 
     /**
      * 【核心新增】实现查询当前或近期方案的逻辑
+     * 【已修正】将奖金区间和最早比赛时间的计算逻辑统一移入 fillDetailsForPeriods
      */
     @Override
     public BizSchemePeriodsVo findActiveOrRecentPeriod() {
@@ -54,7 +61,20 @@ public class BizSchemePeriodsServiceImpl implements IBizSchemePeriodsService {
             .last("LIMIT 1"));
 
         if (pendingPeriod != null) {
-            fillDetailsForPeriods(Collections.singletonList(pendingPeriod));
+            fillDetailsForPeriods(Collections.singletonList(pendingPeriod)); // 此方法现在只填充 details
+            pendingPeriod.setBonusRange(calculateBonusRange(pendingPeriod.getDetails()));
+            Date earliestMatchTime = calculateEarliestMatchTime(pendingPeriod.getDetails());
+            pendingPeriod.setEarliestMatchTime(earliestMatchTime);
+
+            String c = iSysConfigService.selectConfigByKey("sys.biz.showSchemePeriodsDetail");
+            if(!c.equals("1")){
+                Date now = new Date();
+                if (earliestMatchTime != null && now.before(earliestMatchTime)) {
+                    // 尚未開賽，不返回比賽詳情
+                    pendingPeriod.setDetails(Collections.emptyList());
+                }
+            }
+
             return pendingPeriod;
         }
 
@@ -68,10 +88,90 @@ public class BizSchemePeriodsServiceImpl implements IBizSchemePeriodsService {
             .last("LIMIT 1"));
 
         if (recentPeriod != null) {
-            fillDetailsForPeriods(Collections.singletonList(recentPeriod));
+            fillDetailsForPeriods(Collections.singletonList(recentPeriod)); // 此方法现在只填充 details
         }
 
         return recentPeriod; // 如果都找不到，则返回null
+    }
+
+    /**
+     * 【新增】计算方案中最早的比赛时间
+     * @param details 方案的所有详情
+     * @return 最早的比赛时间，如果不存在则返回 null
+     */
+    private Date calculateEarliestMatchTime(List<BizSchemePeriodDetailsVo> details) {
+        if (details == null || details.isEmpty()) {
+            return null;
+        }
+
+        return details.stream()
+            .map(BizSchemePeriodDetailsVo::getBizMatchesVo) // 获取关联的比赛信息
+            .filter(Objects::nonNull) // 过滤掉没有比赛信息的详情
+            .map(BizMatchesVo::getMatchDatetime) // 获取比赛时间
+            .filter(Objects::nonNull) // 过滤掉没有时间的比赛
+            .min(Date::compareTo) // 找到最早的时间
+            .orElse(null); // 如果没有有效时间，返回 null
+    }
+
+    /**
+     * 【新增】计算预期奖金区间的私有方法
+     * @param details 方案的所有详情
+     * @return 格式化的奖金区间字符串，例如 "3.00~6.00"
+     */
+    private String calculateBonusRange(List<BizSchemePeriodDetailsVo> details) {
+        if (details == null || details.isEmpty()) {
+            return null;
+        }
+
+        // 1. 按 MatchId 分组
+        Map<Long, List<BizSchemePeriodDetailsVo>> detailsByMatch = details.stream()
+            .collect(Collectors.groupingBy(BizSchemePeriodDetailsVo::getMatchId));
+
+        BigDecimal minBonus = BigDecimal.ONE;
+        BigDecimal maxBonus = BigDecimal.ONE;
+        boolean calculationPossible = false;
+
+        // 2. 遍历每一场比赛的选项
+        for (List<BizSchemePeriodDetailsVo> matchSelections : detailsByMatch.values()) {
+            // 提取这场比赛所有选项的有效赔率
+            List<BigDecimal> validOdds = matchSelections.stream()
+                .map(BizSchemePeriodDetailsVo::getOdds)
+                .filter(Objects::nonNull) // 过滤 null
+                .filter(odd -> odd.compareTo(BigDecimal.ZERO) > 0) // 过滤 0
+                .collect(Collectors.toList());
+
+            if (validOdds.isEmpty()) {
+                // 如果这场比赛没有任何有效赔率选项，则无法计算总区间
+                continue; // 跳过这场比赛
+            }
+
+            calculationPossible = true; // 标记为至少有一场比赛有赔率
+
+            // 3. 找到这场比赛的最低和最高赔率
+            BigDecimal minOdd = Collections.min(validOdds);
+            BigDecimal maxOdd = Collections.max(validOdds);
+
+            // 4. 累乘计算总区间的最小和最大值
+            minBonus = minBonus.multiply(minOdd);
+            maxBonus = maxBonus.multiply(maxOdd);
+        }
+
+        if (!calculationPossible) {
+            return null; // 没有任何有效赔率，无法计算
+        }
+
+        // 5. 格式化输出
+        // 设置保留两位小数
+        minBonus = minBonus.setScale(2, RoundingMode.HALF_UP);
+        maxBonus = maxBonus.setScale(2, RoundingMode.HALF_UP);
+
+        if (minBonus.compareTo(maxBonus) == 0) {
+            // 如果最小和最大值相等（例如每场比赛都只有一个选项）
+            return minBonus.toPlainString();
+        } else {
+            // 返回区间
+            return minBonus.toPlainString() + "~" + maxBonus.toPlainString();
+        }
     }
 
     /**

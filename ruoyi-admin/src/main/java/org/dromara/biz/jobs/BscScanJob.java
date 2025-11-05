@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.biz.service.BscDepositPoller;
 import org.dromara.biz.service.IBscWalletService;
+import org.dromara.system.service.ISysConfigService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ public class BscScanJob {
 
     private final IBscWalletService iBscWalletService;
     private final BscDepositPoller bscDepositPoller;
+    private final ISysConfigService iSysConfigService;
 
     /**
      * 每分钟执行一次钱包扫描任务
@@ -22,6 +24,12 @@ public class BscScanJob {
 //    @Scheduled(cron = "0 */1 * * * ?")
     @Scheduled(cron = "*/10 * * * * ?")
     public void executeScan() {
+        String c = iSysConfigService.selectConfigByKey("sys.biz.change");
+        if(!c.equals("1")){
+            log.info("系统充值未开发，不进行充值扫描");
+            return ;
+        }
+
         try {
             bscDepositPoller.pollNewBlocks();
 //            iBscWalletService.scanAllWallets();
