@@ -1,6 +1,7 @@
 package org.dromara.biz.service.impl;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -9,8 +10,11 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.dromara.biz.domain.BizOdds;
 import org.dromara.biz.domain.bo.BizOddsBo;
+import org.dromara.biz.domain.bo.BizOddsHistoryBo;
+import org.dromara.biz.domain.vo.BizOddsHistoryVo;
 import org.dromara.biz.domain.vo.BizOddsVo;
 import org.dromara.biz.mapper.BizOddsMapper;
+import org.dromara.biz.service.IBizOddsHistoryService;
 import org.dromara.biz.service.IBizOddsService;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -35,6 +39,8 @@ import java.util.stream.Collectors;
 public class BizOddsServiceImpl extends BaseImpl<BizOdds,BizOddsVo> implements IBizOddsService {
 
     private final BizOddsMapper baseMapper;
+
+    private final IBizOddsHistoryService bizOddsHistoryService;
 
     @PostConstruct
     public void init() {
@@ -187,6 +193,30 @@ public class BizOddsServiceImpl extends BaseImpl<BizOdds,BizOddsVo> implements I
      */
     @Override
     public Boolean saveOrUpdate(BizOddsBo bo) {
+
+        if(bo.getPoolCode() != null && (bo.getPoolCode().toUpperCase().equals("HAD") || bo.getPoolCode().toUpperCase().equals("HHAD"))){
+            BizOddsHistoryVo bizOddsHistoryVo = bizOddsHistoryService.queryOneByMatchIdAndPoolCode(bo.getMatchId(), bo.getPoolCode());
+            boolean diff = false;
+            if(bizOddsHistoryVo == null){
+                diff = true;
+            }else {
+                if(!bizOddsHistoryVo.getHomeOdds().equals(bo.getHomeOdds())){
+                    diff = true;
+                }
+                if(!bizOddsHistoryVo.getHomeOdds().equals(bo.getHomeOdds())){
+                    diff = true;
+                }
+                if(!bizOddsHistoryVo.getAwayOdds().equals(bo.getAwayOdds())){
+                    diff = true;
+                }
+            }
+
+            if(diff){
+                BizOddsHistoryBo bizOddsHistoryBo = new BizOddsHistoryBo();
+                BeanUtil.copyProperties(bo,bizOddsHistoryBo);
+                bizOddsHistoryService.insertByBo(bizOddsHistoryBo);
+            }
+        }
 
         if(bo.getId() != null && bo.getId() > 0){
             return this.updateByBo(bo);

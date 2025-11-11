@@ -145,6 +145,12 @@ alter table biz_sports
     add update_time  datetime                      null comment '更新时间',
     add tenant_id    varchar(20)  default '000000' null comment '租户编号';
 
+alter table biz_odds_history
+    add create_dept  bigint                        null comment '创建部门',
+    add create_by    bigint                        null comment '创建者',
+    add update_by    bigint                        null comment '更新者',
+    add update_time  datetime                      null comment '更新时间';
+
 alter table biz_teams
     add create_dept  bigint                        null comment '创建部门',
     add create_by    bigint                        null comment '创建者',

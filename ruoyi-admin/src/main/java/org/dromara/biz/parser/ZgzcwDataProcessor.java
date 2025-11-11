@@ -11,6 +11,7 @@ import org.dromara.biz.domain.vo.BizOddsVo;
 import org.dromara.biz.service.IBizMatchesService;
 import org.dromara.biz.service.IBizOddsService;
 import org.dromara.biz.utils.PoolCodeUtils;
+import org.dromara.common.core.utils.StringUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -126,7 +127,7 @@ public class ZgzcwDataProcessor {
     @Transactional(rollbackFor = Exception.class)
     public void saveMatchData(MatchData data) {
         if (data.getNewplayId() == null || data.getNewplayId().isEmpty()) {
-//            log.warn("跳過一筆沒有 newplayId 的比賽記錄, sportteryMatchId: {}", data.getMatchId());
+            log.warn("跳過一筆沒有 newplayId 的比賽記錄, sportteryMatchId: {}", data.getMatchId());
             return;
         }
 
@@ -262,6 +263,14 @@ public class ZgzcwDataProcessor {
             Element newPlayIdElement = row.selectFirst("td.wh-8");
             if (newPlayIdElement != null) {
                 matchData.setNewplayId(newPlayIdElement.attr("newplayid"));
+            }
+
+            if(StringUtils.isBlank(matchData.getNewplayId())){
+                newPlayIdElement = row.selectFirst("td.wh-10");
+                if (newPlayIdElement != null) {
+                    matchData.setNewplayId(newPlayIdElement.attr("newplayid"));
+                }
+                log.info("newplayerId 在wh-10扫描");
             }
 
             matchData.setMatchNum(row.attr("mN"));

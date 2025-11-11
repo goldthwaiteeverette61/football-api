@@ -7,8 +7,6 @@ import org.dromara.biz.service.impl.MatchDataCollectionZgzcwServiceImpl;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * 比赛数据定时采集任务
  *
@@ -22,16 +20,10 @@ public class MatchDataCollectionJob {
 
     private final MatchDataCollectionZgzcwServiceImpl matchDataCollectionService;
     private final ZgzcwDataProcessor zgzcwDataProcessor;
-    private final AtomicBoolean running = new AtomicBoolean(false);
 
 //    @Async
     @Scheduled(cron = "0 */2 * * * ?")
     public void execute() {
-//        if (!running.compareAndSet(false, true)) {
-//            log.warn("上一个任务仍在执行中，跳过本轮。");
-//            return;
-//        }
-
         try {
             matchDataCollectionService.collectAndProcessMatches();
             zgzcwDataProcessor.processAllPoolsAndSave();
