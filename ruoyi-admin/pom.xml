@@ -21,28 +21,11 @@
 
     <dependencies>
 
-        <!-- 【核心】新的、正确的 Gemini SDK -->
-        <dependency>
-            <groupId>com.google.genai</groupId>
-            <artifactId>google-genai</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <!-- 【核心】Gson 依赖 (com.google.genai SDK 需要) -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-        </dependency>
-
-        <!-- 【已修正】移除了重复的 gson 依赖 -->
-
         <dependency>
             <groupId>com.github.houbb</groupId>
             <artifactId>opencc4j</artifactId>
             <version>1.8.0</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.web3j</groupId>
@@ -172,22 +155,6 @@
             <version>4.9.3</version>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>com.torigin</groupId>-->
-        <!--            <artifactId>t</artifactId>-->
-        <!--            <version>0.0.1-SNAPSHOT</version>-->
-        <!--            <scope>system</scope>-->
-        <!--            <systemPath>${project.basedir}/lib/t</systemPath>-->
-        <!--        </dependency>-->
-
-        <!--        <dependency>-->
-        <!--            <groupId>com.torigin</groupId>-->
-        <!--            <artifactId>core</artifactId>-->
-        <!--            <version>0.0.1-SNAPSHOT</version>-->
-        <!--            <scope>system</scope>-->
-        <!--            <systemPath>${project.basedir}/lib/core</systemPath>-->
-        <!--        </dependency>-->
-
         <dependency>
             <groupId>com.torigin</groupId>
             <artifactId>t</artifactId>
@@ -235,45 +202,6 @@
 
         </plugins>
     </build>
-
-    <!-- 【【【【【 关键修复 】】】】】 -->
-    <!-- 添加 Maven 中央仓库，解决您之前在私有仓库中找不到依赖的问题 -->
-    <repositories>
-        <!-- 优先使用您的私有仓库 -->
-        <repository>
-            <id>2040399-snapshot-f4Oa5d</id>
-            <url>https://packages.aliyun.com/5f7a900e93de7825187223b4/maven/2040399-snapshot-f4oa5d</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <!-- 【新增】添加 Maven 中央仓库作为备用 -->
-        <repository>
-            <id>central</id>
-            <name>Maven Central Repository</name>
-            <url>https://repo.maven.apache.org/maven2</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <!-- 确保插件仓库也配置了中央仓库 -->
-    <pluginRepositories>
-        <pluginRepository>
-            <id>central</id>
-            <name>Maven Central Repository</name>
-            <url>https://repo.maven.apache.org/maven2</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
 
 
 </project>

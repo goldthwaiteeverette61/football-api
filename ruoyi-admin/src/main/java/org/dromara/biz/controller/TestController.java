@@ -77,9 +77,7 @@ public class TestController extends BaseController {
     public String a(String a) {
         vefi();
         if(a.equals("1")){
-            matchDataCollectionJob.execute();
         }else if(a.equals("2")){
-            schemeSettlementJob.execute();
             bizBetOrdersService.settlePendingOrdersJob();
         }else if(a.equals("3")){
             return "不存在";

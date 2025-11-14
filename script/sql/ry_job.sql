@@ -39,8 +39,9 @@ CREATE TABLE `sj_group_config`
   AUTO_INCREMENT = 0
   DEFAULT CHARSET = utf8mb4 COMMENT ='组配置';
 
-INSERT INTO `sj_group_config` VALUES (1, 'dev', 'ruoyi_group', '', 'SJ_cKqBTPzCsWA3VyuCfFoccmuIEGXjr5KT', 1, 1, 0, 1, 1, 4, now(), now());
-INSERT INTO `sj_group_config` VALUES (2, 'prod', 'ruoyi_group', '', 'SJ_cKqBTPzCsWA3VyuCfFoccmuIEGXjr5KT', 1, 1, 0, 1, 1, 4, now(), now());
+INSERT INTO `sj_group_config` VALUES (1, 'dev', 'scorered', '', 'SJ_Wyz3dmsdbDOkDujOTSSoBjGQP1BMsVnj', 1, 1, 0, 1, 1, 4, now(), now());
+INSERT INTO `sj_group_config` VALUES (2, 'prod', 'scorered', '', 'SJ_Wyz3dmsdbDOkDujOTSSoBjGQP1BMsVnj', 1, 1, 0, 1, 1, 4, now(), now());
+INSERT INTO `sj_group_config` VALUES (3, 'local', 'scorered', '', 'SJ_Wyz3dmsdbDOkDujOTSSoBjGQP1BMsVnj', 1, 1, 0, 1, 1, 4, now(), now());
 
 CREATE TABLE `sj_notify_config`
 (
@@ -248,8 +249,9 @@ CREATE TABLE `sj_system_user`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='系统用户表';
 
+
 -- pwd: admin
-INSERT INTO `sj_system_user` VALUES (1, 'admin', '465c194afb65670f38322df087f0a9bb225cc257e43eb4ac5a0c98ef5b3173ac', 2, now(), now());
+INSERT INTO `sj_system_user` VALUES (1, 'scorered', 'b38ccfe1f688b38212a6ffbd2db3c321112da75b3ff5feb97fe2247c1de1b950', 2, now(), now());
 
 CREATE TABLE `sj_system_user_permission`
 (
