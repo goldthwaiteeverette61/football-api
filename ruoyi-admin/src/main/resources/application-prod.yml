@@ -10,7 +10,7 @@ snail-job:
     host: 127.0.0.1
     port: 17888
   # 命名空间UUID 详见 script/sql/ry_job.sql `sj_namespace`表`unique_id`字段
-  namespace: local
+  namespace: prod
   # 随主应用端口漂移
   port: 2${server.port}
   # 客户端ip指定

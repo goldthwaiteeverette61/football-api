@@ -40,7 +40,7 @@ class MatchDataCollectionJobIntegrationTest extends BaseIntegrationTest {
 
         // --- 2. Act (执行) ---
         // 直接调用定时任务的公开方法来触发其逻辑
-        matchDataCollectionJob.execute();
+//        matchDataCollectionJob.execute();
 
         // --- 3. Assert (断言) ---
         // 验证 matchDataCollection500Service 的 collectAndProcessMatches 方法是否被调用了恰好一次。

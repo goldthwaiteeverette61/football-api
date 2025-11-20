@@ -67,3 +67,11 @@ api-decrypt:
 # --- 租戶功能 (測試時停用) ---
 tenant:
   enable: false
+
+# --- Google Cloud 配置 ---
+google:
+  cloud:
+    project-id: ${GOOGLE_CLOUD_PROJECT_ID:your-project-id}
+    location: ${GOOGLE_CLOUD_LOCATION:us-central1}
+    model-name: gemini-1.5-flash-001
+    api-key: AIzaSyCtIjkZOBnXZC5SO-x7xeQCqoz5sY47u78

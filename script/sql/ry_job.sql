@@ -17,6 +17,7 @@ CREATE TABLE `sj_namespace`
 
 INSERT INTO `sj_namespace` VALUES (1, 'Development', 'dev', '', 0, now(), now());
 INSERT INTO `sj_namespace` VALUES (2, 'Production', 'prod', '', 0, now(), now());
+INSERT INTO `sj_namespace` VALUES (3, 'local', 'local', '', 0, now(), now());
 
 CREATE TABLE `sj_group_config`
 (
@@ -38,6 +39,8 @@ CREATE TABLE `sj_group_config`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 0
   DEFAULT CHARSET = utf8mb4 COMMENT ='组配置';
+
+
 
 INSERT INTO `sj_group_config` VALUES (1, 'dev', 'scorered', '', 'SJ_Wyz3dmsdbDOkDujOTSSoBjGQP1BMsVnj', 1, 1, 0, 1, 1, 4, now(), now());
 INSERT INTO `sj_group_config` VALUES (2, 'prod', 'scorered', '', 'SJ_Wyz3dmsdbDOkDujOTSSoBjGQP1BMsVnj', 1, 1, 0, 1, 1, 4, now(), now());
